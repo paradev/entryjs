@@ -279,6 +279,8 @@ Entry.Playground.prototype.generateCodeView = function(codeView) {
 
     this.blockDriver = new Entry.BlockDriver();
     this.blockDriver.convert();
+    console.log('save this dictionary to file');
+    console.log(Entry.block);
 
     Entry.block.when_run_button_click.event = "start";
 

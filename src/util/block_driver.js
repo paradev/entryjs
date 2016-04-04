@@ -22,7 +22,7 @@ Entry.BlockDriver = function() {
 
         var blockObject = mockup.toJSON();
 
-        blockObject.func = Entry.block[blockType];
+        blockObject.func = Entry.block[blockType].toString();
 
         var blockInfo = EntryStatic.blockInfo[blockType];
         if (blockInfo) {
