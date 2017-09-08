@@ -57653,6 +57653,545 @@ Entry.block = {
         }
     },
 
+    // 블록 명세 작성  https://entrylabs.github.io/docs/guide/entryjs/2016-05-22-add_new_blocks.html
+    // 블록들의 마지막에 새 블록을 추가하면 됨
+    // arduino모듈을 참고하라고 함.
+    xxxx_product_color_single: { // 블록의 key값
+        color: '#00979D', // 하드웨어 블록은 #00979D 로 고정됨
+        skeleton: 'basic', // 블록의 모양. 자세한 설명은 https://entrylabs.github.io/docs/guide/entryjs/2016-05-26-add_new_blocks3.html
+        statements: [], 
+        template: '%1 LED %2 %3', // 블록 템플릿 설정. 나타날 텍스트와 받을 파라미터 설정함
+        params: [{
+            type: 'Dropdown',  // %1는 드롭다운메뉴
+            options: [[Lang.Hw.leftEye, 7], [Lang.Hw.rightEye, 8]] // 다국어 지원됨
+        }, {
+            type: 'Dropdown',  // %2는 드롭다운메뉴 
+            options: [[Lang.Blocks.ARDUINO_on,"on"], [Lang.Blocks.ARDUINO_off,"off"]],
+        }, {
+            type: 'Indicator',  // 엔트리 블록을 보면 블록 오른쪽 끝에 사진들어가있는데 그거임 
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: { // default. 블록이 기본적으로 파라미터가 7, on으로 설정되어있음
+            params: [7, 'on', null],
+            type: 'xxxx_product_color_single' // 블록의 key값과 같아야 함
+        },
+        paramsKeyMap: {
+            PORT: 0, // %1파라미터는 key값이 PORT
+            ONOFF: 1 // %2파라미터는 key값이 ONOFF
+        },
+        class: 'xxxx_product_output_sensor', // entry에서 같은 클래스끼리 블록이 묶이로 다른 클래스틑 가로줄로 구분됨
+        // 블록은 static.js에 쓰인 순서대로 나타나며 클래스가 바뀔 때 마다 가로줄(구분선)이 생김을 유의 해야함
+        isNotFor: ['xxxx_product'],
+        // isNotFor의 역할은 해당 하드웨어가 연결되었을때 해당 하드웨어를 사용자에게 보여주는 
+        // 역할을 하게 되어있습니다. isNotFor에 적힐 데이터는 
+        // entryjs/src/blocks/block_xxxx_product.js에 추가한
+        // Entry.(적성한 하드웨어 오브젝트).name 이 매칭되도록 되어 있습니다. 해당 명칭이 대소문
+        // 자 까지 정확히 매칭되어야 해당 하드웨어가 연결되었을때 정확히 표현할 수 있습니다. 다만 
+        // 해당 내용을 작성하지 않을 경우 항상 표시되도록 되는데 이렇게 작성하시면 저희쪽 반영이 
+        // Reject사유가 되니 빠짐없이 채워주시기 바랍니다.
+        // 이 하드웨어 ID와 모듈명에 관한 내용이 entryjs/src/hw.js에서 this.hwInfo 에 존재하지 않는 경우
+        // isNotFor는 동작하지 않습니다.
+        func: function (sprite, script) {
+            var port = script.getField('PORT'); // key가 PORT인 %1 파라미터 값 읽어옴
+            var onoff = script.getField('ONOFF'); // key가 ONOFF인 %2 파라미터 값 읽어옴
+            var value = onoff == 'on' ? 255 : 0;
+            Entry.hw.setDigitalPortValue(port, value); // 디지털 port를 value로 set하는 함수
+            return script.callReturn();
+        }
+    },
+    xxxx_product_3color: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '3색 LED %1 밝기 %2 %3',
+        params: [{
+            type: 'Dropdown',
+            options: [['빨간색', 9],
+                ['초록색', 10],
+                ['파란색', 11]]
+        }, {
+            type: 'Block',
+            accept: 'string'
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: [9, {type:'number', params: [120]}, null],
+            type: 'xxxx_product_3color'
+        },
+        paramsKeyMap: {
+            PORT: 0,
+            VALUE: 1
+        },
+        class: 'xxxx_product_output_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var port = script.getField('PORT');
+            var value = script.getNumberValue('VALUE');
+            value = Math.round(value);
+            value = Math.max(value, 0);
+            value = Math.min(value, 255);
+            Entry.hw.setDigitalPortValue(port, value);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_vibration: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '진동모터 %1 %2',
+        params: [{
+            type: 'Dropdown',
+            options: [[Lang.Blocks.ARDUINO_on,"on"], [Lang.Blocks.ARDUINO_off,"off"]],
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: ['on', null],
+            type: 'xxxx_product_vibration'
+        },
+        paramsKeyMap: {
+            ONOFF: 0
+        },
+        class: 'xxxx_product_output_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var port = 13;
+            var onoff = script.getField('ONOFF');
+            var value = onoff == 'on' ? 255 : 0;
+            Entry.hw.setDigitalPortValue(port, value);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_buzzer: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '부저 톤%1 %2',
+        params: [{
+            type: 'Dropdown',
+            options: [['G3', 1], ['A3', 2], ['B3', 3], ['C4', 4], ['D4', 5], ['E4', 6], ['F4', 7], ['G4', 8], ['A4', 9], ['B4', 10], ['C5', 11], ['D5', 12], ['E5', 13], ['F5', 14]]
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: [4, null],
+            type: 'xxxx_product_buzzer'
+        },
+        paramsKeyMap: {
+            TONE: 0
+        },
+        class: 'xxxx_product_output_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var tone = script.getField('TONE');
+            Entry.hw.setDigitalPortValue(15, tone);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_buzzer_stop: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '부저 중지 %1',
+        params: [{
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: [null],
+            type: 'xxxx_product_buzzer_stop'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_output_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            Entry.hw.setDigitalPortValue(15, 24);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_servo: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '서보모터 %1 모터값 %2 %3',
+        params: [{
+            type: 'Dropdown',
+            options: [['D3', 'D3'], ['D5', 'D5'], ['D6', 'D6'], ['D9', 'D9'], ['D10', 'D10'], ['D11', 'D11']]
+        }, {
+            type: 'Block',
+            accept: 'string'
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: ['D3', {type:'number', params: [90]}, null],
+            type: 'xxxx_product_servo'
+        },
+        paramsKeyMap: {
+            PORT: 0,
+            VALUE: 1
+        },
+        class: 'xxxx_product_motor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var value = script.getNumberValue('VALUE'); // key가 VALUE인 %2파라미터 값을 숫자로 읽어옴
+            var sq = Entry.hw.sendQueue; // 보낼 데이터 세팅
+            sq.outport = script.getField('PORT');
+            sq.value = 0;
+            if(!isNaN(value)){
+                var tmp = value;
+                if(value < 0) tmp = 0;
+                if(value > 255) tmp = 255;
+                sq.value = tmp;
+            }
+            return script.callReturn();
+        }
+    },
+    xxxx_product_drive: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '방향 %1 속도 %2 %3',
+        params: [{
+            type: 'Dropdown',
+            options: [['앞으로', '0'], ['뒤로', '1'], ['왼쪽', '2'], ['오른쪽', '3']]
+        }, {
+            type: 'Block',
+            accept: 'string'
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: ['0', {type:'number', params: [100]}, null],
+            type: 'xxxx_product_drive'
+        },
+        paramsKeyMap: {
+            DIRECTION: 0,
+            VALUE: 1
+        },
+        class: 'xxxx_product_motor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var value = script.getNumberValue('VALUE');
+            var dir = Number(script.getField('DIRECTION'));
+            var id = 0;
+            //if(value == 0) value = 1;
+            value = Math.round(value);
+            value = Math.max(value, 0);
+            value = Math.min(value, 255);
+
+            value = Math.round(value/30);
+            //if(value == 0) value = 1;
+            var query = (id << 7) + (dir << 5) + value;
+            Entry.hw.setDigitalPortValue(14, query);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_wheel: {
+        color: '#00979D',
+        skeleton: 'basic',
+        statements: [],
+        template: '방향 %1 바퀴속도 %2 %3',
+        params: [{
+            type: 'Dropdown',
+            options: [['왼쪽', '0'], ['오른쪽', '1']]
+        }, {
+            type: 'Block',
+            accept: 'string'
+        }, {
+            type: 'Indicator',
+            img: 'block_icon/hardware_03.png',
+            size: 12
+        }],
+        events: {},
+        def: {
+            params: ['0', {type:'number', params: [100]}, null],
+            type: 'xxxx_product_wheel'
+        },
+        paramsKeyMap: {
+            DIRECTION: 0,
+            VALUE: 1
+        },
+        class: 'xxxx_product_motor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var value = script.getNumberValue('VALUE');
+            var dir = Number(script.getField('DIRECTION'));
+            var id = 1;
+            //if(value == 0)value = 1;
+            value = Math.round(value);
+            value = Math.max(value, -255);
+            value = Math.min(value, 255);
+            if( value < 0 ){
+                dir = 2+dir;
+                value *=-1;
+            }
+            value = Math.round(value/30);
+            //if(value == 0) value = 1;
+            var query = (id << 7) + (dir << 5) + value;
+            Entry.hw.setDigitalPortValue(14, query);
+            return script.callReturn();
+        }
+    },
+    xxxx_product_light: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '밝기센서',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_light'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.getAnalogPortValue('6'); // 아날로그 6번핀에서 값 가져옴
+        }
+    },
+    xxxx_product_button: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '버튼',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_button'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.getDigitalPortValue('12');
+        }
+    },
+    xxxx_product_ir: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: 'IR %1',
+        params: [{
+            type: 'Dropdown',
+            options: [['A0', '0'], ['A4', '4'], ['A5', '5'], ['A7', '7']]
+        }],
+        events: {},
+        def: {
+            params: ['0'],
+            type: 'xxxx_product_ir'
+        },
+        paramsKeyMap: {
+            PORT: 0
+        },
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var port = script.getField('PORT');
+            return Entry.hw.getAnalogPortValue(port);
+        }
+    },
+    xxxx_product_sonar: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '초음파',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_sonar'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.portData.sonar;
+        }
+    },
+    xxxx_product_variable_R: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '가변저항 %1',
+        params: [{
+            type: 'Dropdown',
+            options: [['A0', '0'], ['A1', '1'], ['A4', '4'], ['A5', '5']]
+        }],
+        events: {},
+        def: {
+            params: ['1'],
+            type: 'xxxx_product_variable_R'
+        },
+        paramsKeyMap: {
+            PORT: 0
+        },
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var port = script.getField('PORT');
+            return Entry.hw.getAnalogPortValue(port);
+        }
+    },
+    xxxx_product_mic: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '마이크',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_mic'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.getAnalogPortValue('2');
+        }
+    },
+    xxxx_product_temperature: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '온도',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_temperature'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.portData.temperature; // entry-hw에서 temperature를 key로 보내는 값을 리턴함
+        }
+    },
+    xxxx_product_gyroscope: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '3축 자이로 %1 축 %2',
+        params: [{
+            type: 'Dropdown',
+            options: [['x', 'x'], ['y', 'y'], ['z', 'z']]
+        }, {
+            type: 'Indicator',
+            size: 11
+        }],
+        events: {},
+        def: {
+            params: ['x', null],
+            type: 'xxxx_product_gyroscope'
+        },
+        paramsKeyMap: {
+            AXIS: 0
+        },
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.getAnalogPortValue('gyro_'+axis);
+        }
+    },
+    xxxx_product_geomagnetic: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '3축 지자기 %1 축 %2',
+        params: [{
+            type: 'Dropdown',
+            options: [['x', 'x'], ['y', 'y'], ['z', 'z']]
+        },{
+            type: 'Indicator',
+            size: 11
+        }],
+        events: {},
+        def: {
+            params: ['x', null],
+            type: 'xxxx_product_geomagnetic'
+        },
+        paramsKeyMap: {
+            AXIS: 0
+        },
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            var axis = script.getField('AXIS');
+            return Entry.hw.getAnalogPortValue('geo_'+axis);
+        }
+    },
+    xxxx_product_irR: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: 'IR 리모콘',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_irR'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.getDigitalPortValue('3');
+        }
+    },
+    xxxx_product_tilt: {
+        color: '#00979D',
+        fontColor: '#fff',
+        skeleton: 'basic_string_field',
+        statements: [],
+        template: '틸트',
+        params: [],
+        events: {},
+        def: {
+            params: [],
+            type: 'xxxx_product_tilt'
+        },
+        paramsKeyMap: {},
+        class: 'xxxx_product_input_sensor',
+        isNotFor: ['xxxx_product'],
+        func: function (sprite, script) {
+            return Entry.hw.portData.tilt;
+        }
+    },
+
 };
 
 (function() {

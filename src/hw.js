@@ -71,6 +71,7 @@ Entry.HW = function() {
         '15.1': Entry.coconut,
         '16.1': Entry.MODI,
         '18.1': Entry.Altino,
+        'BB.11': Entry.Xxxx_product,
     };
 };
 

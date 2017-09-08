@@ -936,6 +936,22 @@ EntryStatic.getAllBlocks = function() {
                 "altino_light",
                 "altino_dot_display",
                 "altino_dot_display_line",
+
+                // xxxx_product  block_entry.js에서 작성한 블록들 중 사용할 블록의 key를 쓰면 됨
+                'xxxx_product_color_single',
+                'xxxx_product_3color',
+                'xxxx_product_vibration',
+                'xxxx_product_buzzer',
+                'xxxx_product_buzzer_stop',
+                'xxxx_product_drive',
+                'xxxx_product_wheel',
+                'xxxx_product_light',
+                'xxxx_product_button',
+                'xxxx_product_ir',
+                'xxxx_product_sonar',
+                'xxxx_product_mic',
+                'xxxx_product_temperature',
+                'xxxx_product_tilt',
             ]
         }
     ]
